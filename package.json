@@ -1,0 +1,27 @@
+{
+  "name": "bitespeed-identity-reconciliation",
+  "version": "1.0.0",
+  "description": "Bitespeed ID Reco Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wizaniac/Bitespeed-Identity-Reconciliation.git"
+  },
+  "author": "Tushar Dugar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wizaniac/Bitespeed-Identity-Reconciliation/issues"
+  },
+  "homepage": "https://github.com/Wizaniac/Bitespeed-Identity-Reconciliation#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

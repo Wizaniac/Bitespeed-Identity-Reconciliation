@@ -1,6 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
+const database = require('../databaseConnection')
 
-const Contact = Sequelize.define('Contact', {
+const Contact = database.define('Contact', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -37,6 +38,8 @@ const Contact = Sequelize.define('Contact', {
     type: DataTypes.DATE,
     allowNull: true,
   },
+},{
+    tableName:'Contact'
 });
 
 module.exports = Contact;

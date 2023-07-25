@@ -49,15 +49,15 @@ class ContactService{
             };
             const addContact = await ContactModel.create(dataToAdd);
         }
-        // if(!checkEmailExists && !checkPhoneNumberExists){
-        //     var dataToAdd = {
-        //         phoneNumber:phoneNumber,
-        //         email:email,
-        //         linkedId:null,
-        //         linkPrecedence:"primary"
-        //     };
-        //     const addContact = ContactModel.create(dataToAdd);
-        // }
+        if(!checkEmailExists && !checkPhoneNumberExists){
+            var dataToAdd = {
+                phoneNumber:phoneNumber,
+                email:email,
+                linkedId:null,
+                linkPrecedence:"primary"
+            };
+            const addContact = await ContactModel.create(dataToAdd);
+        }
         // else{
         //     if(checkEmailExists.id===checkPhoneNumberExists.id){
         //         //both same do nothing

@@ -153,35 +153,73 @@ class ContactService{
         }
         var returnData = {};
         if(flag){
-            const getContacts = await ContactModel.findAll({
-                where:{
-                    [Op.or]:[
-                        {id:idOfPrimary},
-                        {linkedId:idOfPrimary}
-                    ]
-                },
-            });
-            returnData['emails'] = new Set([]);
-            returnData['secondaryContactIds'] = new Set([]);
-            returnData['phoneNumbers'] = new Set([]);
-            getContacts.forEach(contact => {
-                const contactJson = contact.toJSON();
-                console.log(contactJson);
-                if(contact.linkPrecedence==="primary"){
-                    returnData['primaryContactId'] = contact.id;
-                }
-                else{
-                    returnData['secondaryContactIds'].add(contact.id)
-                }
-                returnData['emails'].add(contact.email);
-                returnData['phoneNumbers'].add(contact.phoneNumber);
-            });
-            returnData['secondaryContactIds'] = [...returnData['secondaryContactIds']];
-            returnData['emails'] = [...returnData['emails']];
-            returnData['phoneNumbers'] = [...returnData['phoneNumbers']];
+            returnData = await this.extractDataFromIdOfPrimary(idOfPrimary);
             console.log(returnData);
         }
         return {"flag":flag,"data":returnData};       
+    }
+
+    static async getDataFromEmailOnly(email){
+        var checkEmailExists = await ContactModel.findOne({
+            where:{
+                email : email
+            }
+        })
+        if(!checkEmailExists){
+            return {"flag":false}
+        }
+        var returnData = await this.extractDataFromIdOfPrimary(checkEmailExists.id);
+        return {"flag":true,"data":returnData};
+    }
+
+    static async getDataFromPhoneNumberOnly(phoneNumber){
+        phoneNumber = phoneNumber.toString();
+        var checkPhoneNumberExists = await ContactModel.findOne({
+            where:{
+                phoneNumber : phoneNumber
+            }
+        })
+        if(!checkPhoneNumberExists){
+            return {"flag":false,"message":"No contact exists with this phone number! Insufficient data to create new contact."}
+        }
+        var returnData = await this.extractDataFromIdOfPrimary(checkPhoneNumberExists.id);
+        return {"flag":true,"data":returnData};
+    }
+
+
+    static async extractDataFromIdOfPrimary(idOfPrimary){
+        var returnData = {};
+        const getContacts = await ContactModel.findAll({
+            where:{
+                [Op.or]:[
+                    {id:idOfPrimary},
+                    {linkedId:idOfPrimary}
+                ]
+            },
+        });
+        returnData['emails'] = new Set([]);
+        returnData['secondaryContactIds'] = new Set([]);
+        returnData['phoneNumbers'] = new Set([]);
+        var primayEmail = null;
+        var primaryPhoneNumber = null;
+        getContacts.forEach(contact => {
+            const contactJson = contact.toJSON();
+            console.log(contactJson);
+            if(contact.linkPrecedence==="primary"){
+                returnData['primaryContactId'] = contact.id;
+                primayEmail = contact.email;
+                primaryPhoneNumber = contact.phoneNumber
+            }
+            else{
+                returnData['secondaryContactIds'].add(contact.id)
+                returnData['emails'].add(contact.email);
+                returnData['phoneNumbers'].add(contact.phoneNumber);
+            }
+        });
+        returnData['secondaryContactIds'] = [...returnData['secondaryContactIds']];
+        returnData['emails'] = ([primayEmail,...returnData['emails']]);
+        returnData['phoneNumbers'] = ([primaryPhoneNumber,...returnData['phoneNumbers']]);
+        return returnData;
     }
 }
 

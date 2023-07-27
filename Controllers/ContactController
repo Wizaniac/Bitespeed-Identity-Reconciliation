@@ -8,7 +8,7 @@ class ContactController{
             var contactData=[];
             contactData['phoneNumber'] = phoneNumber;
             contactData['email'] = email;
-            //TODO perform email validation
+            //Email Validation can be performed at this stage
             contactData['linkedId'] = linkedId ?? null;
             contactData['linkPrecedence'] = linkPrecedence ?? 'primary';
             const addingcontact = await ContactService.createContact(contactData);
@@ -24,15 +24,33 @@ class ContactController{
         try{
             const {email,phoneNumber} = req.body;
             if(email && phoneNumber){
+                console.log(email);
+                console.log(phoneNumber);
                 const getResponseData = await ContactService.getDataFromEmailAndPhoneNumber(email,phoneNumber);
-                // getResponseData = JSON.stringify(getResponseData);
-                // console.log(getResponseData);
-                // const results = await Promise.all(getResponseData);
-                // var jsonResults = getResponseData.map((result) => result.toJSON());
-                return res.status(200).json(getResponseData);
+                if(getResponseData.flag){
+                    return res.status(200).json({contact:getResponseData.data});
+                }
+                return res.status(400).json({message:"Invalid Input! Both Email and Phone Number is of secondary contacts. Enter at-least 1 data-field of primary contact"})
             }
-            // console.log(getResponseData);
-            return res.status(400);
+            else if(email){
+                console.log(email);
+                const getResponseData = await ContactService.getDataFromEmailOnly(email);
+                if(getResponseData.flag){
+                    return res.status(200).json({contact:getResponseData.data});
+                }
+                return res.status(400).json({message:"No contact exists with this email! Insufficient data to create new contact"})
+            }
+            else if(phoneNumber){
+                console.log(phoneNumber);
+                const getResponseData = await ContactService.getDataFromPhoneNumberOnly(phoneNumber);
+                if(getResponseData.flag){
+                    return res.status(200).json({contact:getResponseData.data});
+                }
+                return res.status(400).json({message:"No contact exists with this phone number! Insufficient data to create new contact"})
+            }
+            else{
+                return res.status(400).json({message:"Invalid Request Input! You have to enter atleast 1 data-field."});
+            }
         }
         catch(exception){
             console.error('Unhandled Exception Add Contact - ',exception);

@@ -25,15 +25,24 @@ class ContactController{
             const {email,phoneNumber} = req.body;
             if(email && phoneNumber){
                 const getResponseData = await ContactService.getDataFromEmailAndPhoneNumber(email,phoneNumber);
-                return res.status(200).json(getResponseData);
+                if(getResponseData.flag){
+                    return res.status(200).json(getResponseData.data);
+                }
+                return res.status(400).json({message:"Invalid Input! Both Email and Phone Number is of secondary contacts. Enter at-least 1 data-field of primary contact"})
             }
             else if(email){
                 const getResponseData = await ContactService.getDataFromEmailOnly(email);
-                return res.status(200).json(getResponseData);
+                if(getResponseData.flag){
+                    return res.status(200).json(getResponseData.data);
+                }
+                return res.status(400).json({message:"No contact exists with this email! Insufficient data to create new contact"})
             }
             else if(phoneNumber){
                 const getResponseData = await ContactService.getDataFromPhoneNumberOnly(email);
-                return res.status(200).json(getResponseData);
+                if(getResponseData.flag){
+                    return res.status(200).json(getResponseData.data);
+                }
+                return res.status(400).json({message:"No contact exists with this phone number! Insufficient data to create new contact"})
             }
             else{
                 return res.status(400).json({message:"Invalid Request Input! You have to enter atleast 1 data-field."});

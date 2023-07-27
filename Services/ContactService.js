@@ -166,7 +166,7 @@ class ContactService{
             }
         })
         if(!checkEmailExists){
-            return {"flag":false,"message":"No contact exists with this email! Insufficient data to create new contact."}
+            return {"flag":false}
         }
         var returnData = await this.extractDataFromIdOfPrimary(checkEmailExists.id);
         return {"flag":true,"data":returnData};
@@ -199,21 +199,25 @@ class ContactService{
         returnData['emails'] = new Set([]);
         returnData['secondaryContactIds'] = new Set([]);
         returnData['phoneNumbers'] = new Set([]);
+        var primayEmail = null;
+        var primaryPhoneNumber = null;
         getContacts.forEach(contact => {
             const contactJson = contact.toJSON();
             console.log(contactJson);
             if(contact.linkPrecedence==="primary"){
                 returnData['primaryContactId'] = contact.id;
+                primayEmail = contact.email;
+                phoneNumber = contact.phoneNumber
             }
             else{
                 returnData['secondaryContactIds'].add(contact.id)
+                returnData['emails'].add(contact.email);
+                returnData['phoneNumbers'].add(contact.phoneNumber);
             }
-            returnData['emails'].add(contact.email);
-            returnData['phoneNumbers'].add(contact.phoneNumber);
         });
         returnData['secondaryContactIds'] = [...returnData['secondaryContactIds']];
-        returnData['emails'] = [...returnData['emails']];
-        returnData['phoneNumbers'] = [...returnData['phoneNumbers']];
+        returnData['emails'] = ([...returnData['emails']]).unshift(primayEmail);
+        returnData['phoneNumbers'] = ([...returnData['phoneNumbers']]).unshift(primaryPhoneNumber);
         return returnData;
     }
 }

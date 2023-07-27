@@ -8,7 +8,7 @@ class ContactController{
             var contactData=[];
             contactData['phoneNumber'] = phoneNumber;
             contactData['email'] = email;
-            //TODO perform email validation
+            //Email Validation can be performed at this stage
             contactData['linkedId'] = linkedId ?? null;
             contactData['linkPrecedence'] = linkPrecedence ?? 'primary';
             const addingcontact = await ContactService.createContact(contactData);
@@ -25,14 +25,19 @@ class ContactController{
             const {email,phoneNumber} = req.body;
             if(email && phoneNumber){
                 const getResponseData = await ContactService.getDataFromEmailAndPhoneNumber(email,phoneNumber);
-                // getResponseData = JSON.stringify(getResponseData);
-                // console.log(getResponseData);
-                // const results = await Promise.all(getResponseData);
-                // var jsonResults = getResponseData.map((result) => result.toJSON());
                 return res.status(200).json(getResponseData);
             }
-            // console.log(getResponseData);
-            return res.status(400);
+            else if(email){
+                const getResponseData = await ContactService.getDataFromEmailOnly(email);
+                return res.status(200).json(getResponseData);
+            }
+            else if(phoneNumber){
+                const getResponseData = await ContactService.getDataFromPhoneNumberOnly(email);
+                return res.status(200).json(getResponseData);
+            }
+            else{
+                return res.status(400).json({message:"Invalid Request Input! You have to enter atleast 1 data-field."});
+            }
         }
         catch(exception){
             console.error('Unhandled Exception Add Contact - ',exception);

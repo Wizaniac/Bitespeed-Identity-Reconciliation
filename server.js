@@ -8,9 +8,6 @@ const contactRoute = require('./Routes/contactRoute')
 const app = express();
 app.use(express.json())
 
-app.use('/',(req,res)=>{
-    res.status(200).json({message:"Identity Reconciliation - Tushar Dugar"});
-});
 app.use(contactRoute);
 
 const PORT = process.env.PORT || 3500

@@ -24,6 +24,8 @@ class ContactController{
         try{
             const {email,phoneNumber} = req.body;
             if(email && phoneNumber){
+                console.log(email);
+                console.log(phoneNumber);
                 const getResponseData = await ContactService.getDataFromEmailAndPhoneNumber(email,phoneNumber);
                 if(getResponseData.flag){
                     return res.status(200).json(getResponseData.data);
@@ -31,6 +33,7 @@ class ContactController{
                 return res.status(400).json({message:"Invalid Input! Both Email and Phone Number is of secondary contacts. Enter at-least 1 data-field of primary contact"})
             }
             else if(email){
+                console.log(email);
                 const getResponseData = await ContactService.getDataFromEmailOnly(email);
                 if(getResponseData.flag){
                     return res.status(200).json(getResponseData.data);
@@ -38,7 +41,8 @@ class ContactController{
                 return res.status(400).json({message:"No contact exists with this email! Insufficient data to create new contact"})
             }
             else if(phoneNumber){
-                const getResponseData = await ContactService.getDataFromPhoneNumberOnly(email);
+                console.log(phoneNumber);
+                const getResponseData = await ContactService.getDataFromPhoneNumberOnly(phoneNumber);
                 if(getResponseData.flag){
                     return res.status(200).json(getResponseData.data);
                 }

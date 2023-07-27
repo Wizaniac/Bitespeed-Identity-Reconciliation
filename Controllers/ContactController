@@ -1,0 +1,44 @@
+
+const { get } = require('../Routes/contactRoute');
+const ContactService = require('../Services/ContactService')
+class ContactController{
+    static async addContact(req,res){
+        try{
+            const {phoneNumber,email,linkedId,linkPrecedence} = req.body;
+            var contactData=[];
+            contactData['phoneNumber'] = phoneNumber;
+            contactData['email'] = email;
+            //TODO perform email validation
+            contactData['linkedId'] = linkedId ?? null;
+            contactData['linkPrecedence'] = linkPrecedence ?? 'primary';
+            const addingcontact = await ContactService.createContact(contactData);
+            return res.status(201).json(addingcontact);
+        }
+        catch(exception){
+            console.error('Unhandled Exception Add Contact - ',exception);
+            return res.status(500).json({message:"Something Went Wrong! Kindly Contact Support"})
+        }
+    }
+
+    static async identifyContact(req,res){
+        try{
+            const {email,phoneNumber} = req.body;
+            if(email && phoneNumber){
+                const getResponseData = await ContactService.getDataFromEmailAndPhoneNumber(email,phoneNumber);
+                // getResponseData = JSON.stringify(getResponseData);
+                // console.log(getResponseData);
+                // const results = await Promise.all(getResponseData);
+                // var jsonResults = getResponseData.map((result) => result.toJSON());
+                return res.status(200).json(getResponseData);
+            }
+            // console.log(getResponseData);
+            return res.status(400);
+        }
+        catch(exception){
+            console.error('Unhandled Exception Add Contact - ',exception);
+            return res.status(500).json({message:"Something Went Wrong! Kindly Contact Support"})
+        }
+    }
+}
+
+module.exports = ContactController;

@@ -1,10 +1,14 @@
 require('dotenv').config()
 const express = require('express');
-const path = require('path')
+const bodyParser = require('body-parser');
+const path = require('path');
+const database = require('./databaseConnection')
+const contactRoute = require('./Routes/contactRoute')
 
 const app = express();
 app.use(express.json())
 
+app.use(contactRoute);
 
 const PORT = process.env.PORT || 3500
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));

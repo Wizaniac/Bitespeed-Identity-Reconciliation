@@ -173,6 +173,7 @@ class ContactService{
     }
 
     static async getDataFromPhoneNumberOnly(phoneNumber){
+        phoneNumber = phoneNumber.toString();
         var checkPhoneNumberExists = await ContactModel.findOne({
             where:{
                 phoneNumber : phoneNumber
@@ -207,7 +208,7 @@ class ContactService{
             if(contact.linkPrecedence==="primary"){
                 returnData['primaryContactId'] = contact.id;
                 primayEmail = contact.email;
-                phoneNumber = contact.phoneNumber
+                primaryPhoneNumber = contact.phoneNumber
             }
             else{
                 returnData['secondaryContactIds'].add(contact.id)
@@ -216,8 +217,8 @@ class ContactService{
             }
         });
         returnData['secondaryContactIds'] = [...returnData['secondaryContactIds']];
-        returnData['emails'] = ([...returnData['emails']]).unshift(primayEmail);
-        returnData['phoneNumbers'] = ([...returnData['phoneNumbers']]).unshift(primaryPhoneNumber);
+        returnData['emails'] = ([primayEmail,...returnData['emails']]);
+        returnData['phoneNumbers'] = ([primaryPhoneNumber,...returnData['phoneNumbers']]);
         return returnData;
     }
 }
